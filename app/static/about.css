@@ -1,0 +1,105 @@
+/* General Reset */
+body {
+  font-family: 'Poppins', Arial, sans-serif; /* Modern font */
+  margin: 0;
+  padding: 0;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f4f9fc; /* Very light blue background */
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: #5dade2; /* Lighter blue */
+  color: white;
+  padding: 100px 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds subtle depth */
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Softer shadow */
+}
+
+.user-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.user-type {
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 15px 30px;
+  border: 2px solid white;
+  border-radius: 50px; /* Rounded buttons */
+  text-decoration: none;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent */
+  transition: all 0.3s ease;
+}
+
+.user-type:hover {
+  background-color: white;
+  color: #5dade2;
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Footer */
+footer {
+  background-color: #398ad7; /* Slightly darker blue */
+  color: white;
+  padding: 40px 20px;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-section {
+  flex: 1;
+  margin: 10px;
+  min-width: 200px;
+}
+
+.footer-section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin: 8px 0;
+}
+
+.footer-section ul li a {
+  text-decoration: none;
+  color: #d8e9f7; /* Softer white */
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: white; /* Brighter on hover */
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+  border-top: 1px solid #6aaef3; /* Accent color */
+  padding-top: 10px;
+  font-size: 0.9rem;
+  color: #d8e9f7;
+}

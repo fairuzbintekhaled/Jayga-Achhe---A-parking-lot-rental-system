@@ -1,0 +1,137 @@
+/* General Reset */
+body {
+  font-family: 'Poppins', Arial, sans-serif; /* Modern font */
+  margin: 0;
+  padding: 0;
+  background-color: #f4f9fc; /* Subtle light blue background */
+  color: #333;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  position: fixed;
+  height: 100%;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  color: #007bff;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  color: #0056b3;
+}
+
+.logout-btn {
+  margin-top: 20px;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 270px; /* Sidebar width */
+  padding: 30px;
+}
+
+/* Booking History */
+.booking-history-container {
+  max-width: 800px;
+  margin: 0 auto; /* Center content */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.booking-history-container h1 {
+  color: #007bff;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.booking-history-container p {
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.booking-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.booking-card h3 {
+  margin: 0 0 15px;
+  color: #007bff;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.booking-card p {
+  margin: 8px 0;
+  color: #495057;
+}
+
+.view-receipt-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.view-receipt-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}

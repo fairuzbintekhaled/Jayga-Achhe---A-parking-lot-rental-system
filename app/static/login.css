@@ -1,0 +1,96 @@
+/* Login Form Styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, hwb(204 54% 13%), #63b4f0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #5dade2(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form h2 {
+  text-align: center;
+  color: #4d4d4d;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #4d4d4d;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.checkbox-group label {
+  font-size: 14px;
+  color: #4d4d4d;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #63b4f0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0c538a;
+}
+
+.form-links {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.form-links a {
+  color: #020202;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.form-links a:hover {
+  text-decoration: underline;
+}
+/* Styling for Select Dropdown */
+#user-type {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: white;
+  color: #4d4d4d;
+}

@@ -1,0 +1,130 @@
+/* General Reset */
+body {
+  font-family: 'Poppins', Arial, sans-serif; /* Modern font */
+  margin: 0;
+  padding: 0;
+  background-color: #f4f9fc; /* Subtle light blue background */
+  color: #333;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: #f8f9fa; /* Light gray */
+  padding: 20px;
+  position: fixed;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  color: #007bff;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+.logout-btn {
+  margin-top: 20px;
+  background: #533ce7; /* Purple button */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #432abc; /* Darker purple on hover */
+}
+
+.logout-btn a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Main Content Styling */
+.main-content {
+  margin-left: 270px; /* Sidebar width */
+  padding: 30px;
+}
+
+.main-content h1 {
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: #007bff; /* Blue header background */
+  color: #fff;
+  font-weight: 600;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #eef4ff; /* Light blue hover */
+}
+
+.delete-btn {
+  background-color: #533ce7;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #432abc;
+  transform: scale(1.05); /* Slight zoom effect */
+}

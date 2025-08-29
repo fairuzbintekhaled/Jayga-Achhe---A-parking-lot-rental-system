@@ -1,0 +1,108 @@
+/* Form Container */
+form {
+  max-width: 500px;
+  margin: 50px auto;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Form Title */
+form h2 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+/* Labels */
+form label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #333333;
+  font-weight: bold;
+}
+
+/* Input Fields */
+form input[type="text"],
+form input[type="date"],
+form textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="date"]:focus,
+form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Submit Button */
+form button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Optional Message Styling */
+form textarea {
+  height: 100px;
+  resize: none;
+}
+
+/* Form Fieldset */
+form fieldset {
+  border: none;
+  padding: 0;
+}
+
+/* Form Instructions */
+form small {
+  display: block;
+  margin-top: -15px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Cute Icons for Input Fields */
+form .input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+form .input-group input,
+form .input-group textarea {
+  flex: 1;
+  padding-left: 40px;
+}
+
+form .input-group i {
+  position: absolute;
+  left: 10px;
+  color: #007bff;
+  font-size: 1.2rem;
+}

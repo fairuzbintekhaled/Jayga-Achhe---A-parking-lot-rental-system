@@ -1,0 +1,116 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa; /* Light grey background */
+  color: #333; /* Dark text color */
+}
+
+/* Form Container */
+.form-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #ffffff; /* White background for form */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border: 1px solid #ddd; /* Light grey border */
+}
+
+/* Form Header */
+.form-container h1 {
+  margin-top: 0;
+  color: #0a0a0a; /* Airbnb's pink color */
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Form Labels */
+.form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555; /* Slightly dark grey */
+}
+
+/* Input Fields */
+.form-container input,
+.form-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc; /* Light grey border */
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-container textarea {
+  resize: vertical; /* Allow vertical resizing only */
+  height: 100px;
+}
+
+/* Submit Button */
+.form-container button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff; /* Airbnb's pink color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #6e6b6c; /* Darker pink on hover */
+}
+
+/* Back Link */
+.form-container .back-link {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #090909;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.form-container .back-link:hover {
+  text-decoration: underline;
+}
+
+#location-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+#location-modal input {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+#location-modal button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#location-modal button:hover {
+    background-color: #0056b3;
+}
+
