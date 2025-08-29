@@ -1,0 +1,6 @@
+Flask==2.3.2
+Flask_SQLAlchemy==3.0.3
+Flask_Migrate==4.0.4
+Flask_Login==0.6.2
+Flask_WTF==1.1.1
+python-dotenv==1.0.0
