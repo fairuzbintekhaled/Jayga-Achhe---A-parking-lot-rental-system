@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='requested_booking.css') }}">
+    <title>Requested Bookings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Car Owner</h2>
+        <ul>
+            <li><a href="{{ url_for('routes.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('routes.profile') }}">Profile</a></li>
+            <li><a href="{{ url_for('routes.booking_history') }}">Booking History</a></li>
+        </ul>
+        <button class="logout-btn"><a href="{{ url_for('routes.logout') }}">Logout</a></button>
+    </div>
+    <div class="main-content">
+        <h1>Your Requested Bookings</h1>
+        <table>
+          <thead>
+              <tr>
+                  <th>Renter Name</th>
+                  <th>Location</th>
+                  <th>Preferred Date</th>
+                  <th>Status</th>
+                  <th>Payment Status</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for booking in bookings %}
+                  <tr>
+                      <td>{{ booking.renter.name }}</td>
+                      <td>{{ booking.location.place_name if booking.location else 'N/A' }}</td>
+                      <td>{{ booking.preferred_date }}</td>
+                      <td>{{ booking.status.name }}</td>
+                      <td>{{ booking.payment_status.value }}</td>
+                      <td>
+                          {% if booking.status.name in ['Pending', 'Rejected'] %}
+                              <button class="delete-btn" onclick="deleteBooking('{{ booking.id }}')">Delete</button>
+                          {% else %}
+                              <span>Not Allowed</span>
+                          {% endif %}
+                      </td>
+                  </tr>
+              {% endfor %}
+              {% if bookings|length == 0 %}
+                  <tr>
+                      <td colspan="6">No bookings found.</td>
+                  </tr>
+              {% endif %}
+          </tbody>
+      </table>
+      
+    </div>
+    <script>
+      function deleteBooking(bookingId) {
+          if (confirm("Are you sure you want to delete this booking?")) {
+              fetch(`/delete_booking/${bookingId}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+              })
+              .then(response => {
+                  if (response.ok) {
+                      alert("Booking deleted successfully!");
+                      location.reload(); // Reload the page to update the table
+                  } else {
+                      alert("Failed to delete booking. Please try again.");
+                  }
+              })
+              .catch(error => {
+                  console.error("Error deleting booking:", error);
+                  alert("An error occurred. Please try again.");
+              });
+          }
+      }
+  </script>
+  
+</body>
+</html>

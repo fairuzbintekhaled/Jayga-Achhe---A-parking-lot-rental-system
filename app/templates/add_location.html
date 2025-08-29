@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Location</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add_location.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add New Location</h1>
+    <form method="POST" action="{{ url_for('routes.add_location') }}">
+        <!-- Map for Pinning the Location -->
+        <div id="map"></div>
+
+        <!-- Latitude and Longitude Inputs -->
+        <input type="hidden" id="lat" name="lat" required>
+        <input type="hidden" id="lng" name="lng" required>
+
+        <!-- Other Form Fields -->
+        <label for="place_name">Place Name:</label>
+        <input type="text" id="place_name" name="place_name" required><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" readonly required><br>
+
+        <label for="price">Price (per day):</label>
+        <input type="number" id="price" name="price" required><br>
+
+        <label for="amenities">Amenities:</label>
+        <input type="text" id="amenities" name="amenities"><br>
+
+        <button type="submit">Save Location</button>
+    </form>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([23.8103, 90.4125], 12); // Centered at Dhaka
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Marker for the pinned location
+        let marker;
+
+        // Reverse Geocoding API (Nominatim)
+        const geocodeUrl = "https://nominatim.openstreetmap.org/reverse?format=jsonv2";
+
+        // Map click event
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+
+            // Add or move the marker
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+
+            // Update hidden inputs
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+
+            // Reverse geocode to get the address
+            fetch(`${geocodeUrl}&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name || "Address not found";
+                    document.getElementById('address').value = address;
+                    marker.bindPopup(`<strong>${address}</strong>`).openPopup();
+                })
+                .catch(error => {
+                    console.error("Error fetching address:", error);
+                    document.getElementById('address').value = "Failed to fetch address";
+                });
+        });
+    </script>
+</body>
+</html>

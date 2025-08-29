@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Owner Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-pic-container">
+            {% if car_owner.profile_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + car_owner.profile_pic) }}" alt="Profile Picture" class="profile-pic">
+            {% else %}
+                <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-pic">
+            {% endif %}
+            <div class="profile-bio">{{ car_owner.bio }}</div>
+        </div>
+        <h2>Car Owner</h2>
+        <a href="{{ url_for('routes.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('routes.profile') }}">Profile</a>
+        <a href="{{ url_for('routes.requested_booking') }}">Requested Booking</a>
+        <a href="{{ url_for('routes.booking_history') }}">Booking History</a>
+        <div class="logout">
+            <a href="{{ url_for('routes.logout') }}">Logout</a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome, {{ car_owner.name }}!</h1>
+            <form method="GET" action="{{ url_for('routes.dashboard') }}">
+                <input type="text" name="search" placeholder="Search locations" value="{{ request.args.get('search', '') }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <h2>Your Requested Bookings</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Renter Name</th>
+                    <th>Location</th>
+                    <th>Preferred Date</th>
+                    <th>Status</th>
+                    <th>Payment Status</th> <!-- New column -->
+                    <th>Pay</th>
+                    
+                    <th>Messages</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.renter.name }}</td>
+                        <td>{{ booking.location.place_name if booking.location else 'N/A' }}</td>
+                        <td>{{ booking.preferred_date }}</td>
+                        <td>{{ booking.status.name }}</td>
+                        <td>{{ booking.payment_status.value }}</td> <!-- Display payment status -->
+                        <td>
+                            {% if booking.status.name == 'Approved' %}
+                                {% if booking.payment_status.value == 'Due' %}
+                                    <button class="pay-btn" onclick="handlePayment('{{ booking.id }}')">Pay</button>
+                                {% else %}
+                                    <span>Paid</span>
+                                {% endif %}
+                            {% else %}
+                                <span>No Action</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.status.name == 'Approved' %}
+                                <a href="{{ url_for('routes.view_messages', booking_id=booking.id) }}">View Messages</a>
+                            {% else %}
+                                <span>No Messages</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.payment_status.value == 'Paid' %}
+                                <a href="{{ url_for('routes.cancellation_policy', booking_id=booking.id) }}" class="btn btn-danger">Remove</a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Not Allowed</button>
+                            {% endif %}
+                        </td>
+                        
+                    </tr>
+                {% endfor %}
+                {% if bookings|length == 0 %}
+                    <tr>
+                        <td colspan="6">No bookings found for your requested locations.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            
+            
+        </table>
+        <!-- Map Section -->
+        <h2>Available Locations Map</h2>
+        <div id="map"></div>
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Secure Payment</h2>
+                <form id="paymentForm">
+                    <input type="hidden" id="bookingIdInput" name="bookingId" value="">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" name="cardNumber" placeholder="Enter your card number">
+                
+                    <label for="cardHolder">Cardholder Name</label>
+                    <input type="text" id="cardHolder" name="cardHolder" placeholder="Enter cardholder's name">
+                
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="month" id="expiryDate" name="expiryDate">
+                
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" name="cvv" placeholder="Enter CVV">
+                
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" name="amount" placeholder="Enter payment amount" required>
+                
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="creditCard">Credit Card</option>
+                        <option value="bkash">bKash</option>
+                        <option value="nagad">Nagad</option>
+                    </select>
+                
+                    <button type="submit">Pay Now</button>
+                </form>
+                
+                
+            </div>
+        </div>
+
+        <h2>Available Locations</h2>
+        <div class="locations-grid">
+            {% for location in locations %}
+            <div class="location-card">
+                <h3>{{ location.place_name }}</h3>
+                <p><strong>Address:</strong> {{ location.address }}</p>
+                <p><strong>Price:</strong> ${{ location.price }}/day</p>
+                <p><strong>Amenities:</strong> {{ location.amenities if location.amenities else 'No amenities listed' }}</p>
+                <p><strong>Status:</strong> {{ "Available" if location.available else "Not Available" }}</p>
+                <div class="buttons">
+                    <a href="{{ url_for('routes.booking_form', location_id=location.id) }}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+
+
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+// Initialize the map
+        const map = L.map('map').setView([23.8103, 90.4125], 12); // Default to Dhaka
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Fetch locations data from the API
+        fetch("/api/locations")
+            .then(response => response.json())
+            .then(locations => {
+                // Add markers for available locations
+                locations.forEach(location => {
+                    if (location.available) {
+                        L.marker([location.lat, location.lng]).addTo(map)
+                            .bindPopup(`
+                                <strong>${location.place_name}</strong><br>
+                                Address: ${location.address}<br>
+                                Price: $${location.price}/month<br>
+                                Amenities: ${location.amenities || 'No amenities listed.'}
+                                <div class="buttons">
+                                    <a href="/booking_form/${location.id}" class="book-btn" style="background-color: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;">Book Now</a>
+                                </div>
+                            `);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching locations:", error);
+            });
+    });
+
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("paymentModal");
+        const closeModal = document.querySelector(".close");
+
+        // Handle "Pay" button click to open modal
+        document.querySelectorAll(".pay-btn").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default action
+                modal.style.display = "block"; // Show the modal
+            });
+        });
+
+        // Handle "X" button to close modal
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none"; // Hide the modal
+        });
+
+        // Handle click outside the modal to close it
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none"; // Hide modal if clicked outside
+            }
+        });
+
+        // Prevent form submission and keep modal open for testing
+        document.getElementById("paymentForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Stop form submission
+            alert("Payment processed successfully!");
+            modal.style.display = "none"; // Hide modal after success
+        });
+    });
+</script>
+<script>
+    function togglePaymentFields() {
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        const cardFields = ["cardNumber", "cardHolder", "expiryDate", "cvv"];
+        const bkashFields = ["bkashNumber"];
+        const nagadFields = ["nagadNumber"];
+
+        // Reset all fields' visibility and required attributes
+        document.getElementById("bkashFields").style.display = "none";
+        document.getElementById("nagadFields").style.display = "none";
+        cardFields.forEach(fieldId => document.getElementById(fieldId).required = false);
+        document.getElementById("bkashNumber").required = false;
+        document.getElementById("nagadNumber").required = false;
+
+        // Set fields based on selected payment method
+        if (paymentMethod === "creditCard") {
+            cardFields.forEach(fieldId => document.getElementById(fieldId).required = true);
+        } else if (paymentMethod === "bkash") {
+            document.getElementById("bkashFields").style.display = "block";
+            document.getElementById("bkashNumber").required = true;
+        } else if (paymentMethod === "nagad") {
+            document.getElementById("nagadFields").style.display = "block";
+            document.getElementById("nagadNumber").required = true;
+        }
+    }
+
+    // Ensure the form is submitted properly
+    document.getElementById("paymentForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        if (paymentMethod === "bkash") {
+            const bkashNumber = document.getElementById("bkashNumber").value;
+            alert(`Paying via bKash: ${bkashNumber}`);
+            // Add bKash integration logic here
+        } else if (paymentMethod === "nagad") {
+            const nagadNumber = document.getElementById("nagadNumber").value;
+            alert(`Paying via Nagad: ${nagadNumber}`);
+            // Add Nagad integration logic here
+        } else if (paymentMethod === "creditCard") {
+            const cardNumber = document.getElementById("cardNumber").value;
+            const cardHolder = document.getElementById("cardHolder").value;
+            alert(`Paying via Credit Card: ${cardNumber}, ${cardHolder}`);
+            // Add Credit Card payment gateway integration here
+        }
+
+        // Close modal after processing
+        const modal = document.getElementById("paymentModal");
+        modal.style.display = "none";
+    });
+</script>
+<script>
+    
+    function handlePayment(bookingId) {
+    // Open the modal and set the booking ID in a hidden field
+            const modal = document.getElementById("paymentModal");
+            modal.style.display = "block";
+
+            // Set the booking ID in a hidden input (if not already done)
+            const bookingInput = document.getElementById("bookingIdInput");
+            bookingInput.value = bookingId;
+        }
+
+        // Handle the form submission
+    document.getElementById("paymentForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Collect payment details
+        const bookingId = document.getElementById("bookingIdInput").value;
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        const amount = document.getElementById("amount").value;
+
+        // Validate payment details (optional, depends on your requirements)
+        if (!amount || !paymentMethod) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        // Simulate processing payment
+        fetch(`/process_payment/${bookingId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentMethod, amount })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("Payment successful!");
+                    location.reload(); // Reload to update the payment status
+                } else {
+                    alert("Payment failed. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error processing payment:", error);
+            });
+
+        // Close the modal
+        const modal = document.getElementById("paymentModal");
+        modal.style.display = "none";
+    });
+
+    
+</script>
+<script>
+    function removeBookingRow(bookingId) {
+        // Perform a fetch request to delete the booking from the backend
+        fetch(`/delete_booking/${bookingId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the row from the table
+                const row = document.getElementById(`booking-row-${bookingId}`);
+                if (row) {
+                    row.remove();
+                }
+            } else {
+                alert("Failed to remove booking: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error removing booking:", error);
+            alert("An error occurred while trying to remove the booking.");
+        });
+    }
+</script>
+
+
+
+
+</body>
+</html>

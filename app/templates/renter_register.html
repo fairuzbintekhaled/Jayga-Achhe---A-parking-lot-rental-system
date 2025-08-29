@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renter Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        form label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        form input,
+        form select,
+        form button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0.5rem;
+        }
+        form button {
+            background: #007bff;
+            color: white;
+            border: none;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        form button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Register as a Renter</h1>
+        <form method="POST" action="/renter/register">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+
+            <label for="renting_place">Renting Place</label>
+            <input type="text" id="renting_place" name="renting_place" placeholder="Enter the renting place address" required>
+
+            <label for="price">Price (USD)</label>
+            <input type="number" id="price" name="price" step="0.01" placeholder="Enter the price" required>
+
+            <label for="place_type">Place Type</label>
+            <select id="place_type" name="place_type" required>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+            </select>
+
+            <label for="amenities">Amenities</label>
+            <div class="checkbox-group">
+                <div>
+                    <input type="checkbox" id="security" name="amenities" value="Security">
+                    <label for="security">Security</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="lighting" name="amenities" value="Lighting">
+                    <label for="lighting">Lighting</label>
+                </div>
+            </div>
+
+            <label for="timing">Timing</label>
+            <input type="text" id="timing" name="timing" placeholder="e.g., 9am-5pm" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

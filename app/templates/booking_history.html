@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='booking_history.css') }}">
+    <title>Booking History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/requested_booking"> Requested Bookings</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout" class="logout-btn">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="booking-history-container">
+            <h1>Your Booking History</h1>
+            <p>Below is a list of your past reservations and receipts. Click on a booking to view details.</p>
+        
+            {% for booking in bookings %}
+            <div class="booking-card">
+                <h3>Booking #{{ booking.id }}</h3>
+                <p><strong>Address:</strong> {{ booking.location }}</p>
+                <p><strong>Date:</strong> {{ booking.date }}</p>
+                <p><strong>Total:</strong> BDT {{ booking.total }}</p>
+                <button class="view-receipt-btn">View Receipt</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
+

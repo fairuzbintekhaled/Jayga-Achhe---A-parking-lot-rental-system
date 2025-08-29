@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renter Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='renter_dashboard.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px; /* Hidden initially */
+            width: 250px;
+            height: 100%;
+            background-color: #bcd9f6;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0; /* Slide in */
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #020202;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #1582ef;
+        }
+
+        .profile-pic-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        /* Content Styling */
+        .content {
+            margin-left: 100px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+
+        .content.shifted {
+            margin-left: 400px; /* Push content to the right */
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .location-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .location-card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .btn {
+            margin-right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        /* Messages Section */
+        .messages-container {
+            margin-top: 20px;
+        }
+
+        .car-owner-messages {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .car-owner-messages:last-child {
+            border-bottom: none;
+        }
+
+        .car-owner-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .message-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .message-card p {
+            margin: 5px 0;
+        }
+
+        .message-card small {
+            color: #666;
+        }
+
+        .reply-form {
+            margin-top: 10px;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .reply-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reply-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>{{ renter.name }}</h2>
+        <div class="profile-pic-container">
+            {% if renter.profile_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + renter.profile_pic) }}" alt="Profile Picture" class="profile-pic">
+            {% else %}
+                <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-pic">
+            {% endif %}
+        </div>
+        <p>{{ renter.bio or "No bio available." }}</p>
+        <a href="{{ url_for('routes.renter_profile') }}">Profile</a>
+        <a href="{{ url_for('routes.renter_bookings') }}">Your Bookings</a>
+        <a href="{{ url_for('routes.renter_dashboard') }}#messages">Messages</a>
+        <a href="{{ url_for('routes.logout') }}">Logout</a>
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" id="toggle-btn">☰</button>
+
+    <!-- Content -->
+    <div class="content" id="content">
+        <h1>Welcome, {{ renter.name }}!</h1>
+        <a href="{{ url_for('routes.add_location') }}" class="btn btn-primary">Add New Location</a>
+
+        <div id="map"></div>
+
+        <h2>Your Locations</h2>
+        <div class="locations">
+            {% for location in locations %}
+            <div class="location-card">
+                <h3>{{ location.place_name }}</h3>
+                <p>Address: {{ location.address }}</p>
+                <p>Price: {{ location.price }} /day</p>
+                <p>Amenities: {{ location.amenities if location.amenities else 'No amenities listed.' }}</p>
+                <p>Status: {{ "Available" if location.available else "Not Available" }}</p>
+                <a href="{{ url_for('routes.edit_location', location_id=location.id) }}" class="btn btn-primary">Edit</a>
+                <form method="POST" action="{{ url_for('routes.delete_location', location_id=location.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <button class="btn btn-secondary" onclick="toggleAvailability({{ location.id }}, this)">
+                    {% if location.available %}
+                        Mark as Unavailable
+                    {% else %}
+                        Mark as Available
+                    {% endif %}
+                </button>
+            </div>
+            {% else %}
+            <p>No locations listed yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Messages Section -->
+        <!-- Inside renter_dashboard.html -->
+        <<h2 id="messages">Messages</h2>
+        <div class="messages-container">
+            {% if messages %}
+                <!-- Group messages by car owner -->
+                {% set grouped_messages = {} %}
+                {% for message in messages %}
+                    {% set car_owner_id = message.booking.car_owner_id %}
+                    {% if car_owner_id not in grouped_messages %}
+                        {% set _ = grouped_messages.__setitem__(car_owner_id, []) %}
+                    {% endif %}
+                    {% set _ = grouped_messages[car_owner_id].append(message) %}
+                {% endfor %}
+        
+                <!-- Display messages for each car owner -->
+                {% for car_owner_id, car_owner_messages in grouped_messages.items() %}
+                    {% set car_owner = car_owner_messages[0].booking.car_owner %}
+                    <div class="car-owner-messages">
+                        <div class="car-owner-header">
+                            Messages from {{ car_owner.name }} (Car Owner)
+                        </div>
+                        <!-- Sort messages by timestamp (newest first) -->
+                        {% for message in car_owner_messages | sort(attribute='timestamp', reverse=True) %}
+                            <div class="message-card">
+                                <p><strong>Message:</strong> {{ message.message_content }}</p>
+                                <small>{{ message.timestamp.strftime('%B %d, %Y %I:%M %p') }}</small>
+        
+                                <!-- Reply Form -->
+                                <form class="reply-form" method="POST" action="{{ url_for('routes.reply_message', message_id=message.id) }}">
+                                    <textarea name="reply_message" placeholder="Write your reply here..." rows="4" required></textarea>
+                                    <button type="submit">Reply</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No messages yet.</p>
+            {% endif %}
+        </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            content.classList.toggle('shifted');
+        });
+
+        let mapMarkers = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const map = L.map('map').setView([23.8103, 90.4125], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            fetch("/api/all_locations")
+                .then(response => response.json())
+                .then(locations => {
+                    locations.forEach(location => {
+                        const marker = L.marker([location.lat, location.lng], {
+                            title: location.place_name
+                        }).addTo(map)
+                          .bindPopup(`
+                            <strong>${location.place_name}</strong><br>
+                            Address: ${location.address}<br>
+                            Price: ${location.price}/hour<br>
+                            Amenities: ${location.amenities || "No amenities listed."}
+                          `);
+
+                        if (!location.available) {
+                            marker.setOpacity(0);
+                        }
+
+                        mapMarkers.push(marker);
+                    });
+                })
+                .catch(error => console.error("Error fetching locations:", error));
+        });
+
+        function toggleAvailability(locationId, button) {
+            fetch(`/toggle_availability_ajax/${locationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const locationCard = button.closest('.location-card');
+                    const statusText = locationCard.querySelector('p:nth-of-type(4)');
+                    statusText.textContent = `Status: ${data.available ? "Available" : "Not Available"}`;
+                    button.textContent = data.available ? "Mark as Unavailable" : "Mark as Available";
+
+                    const matchingMarker = mapMarkers.find(marker => marker.options.title === locationCard.querySelector('h3').textContent);
+                    if (matchingMarker) {
+                        matchingMarker.setOpacity(data.available ? 1 : 0);
+                    }
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                alert("Failed to update availability: " + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

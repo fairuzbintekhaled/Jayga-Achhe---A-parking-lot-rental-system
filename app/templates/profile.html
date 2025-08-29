@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <style>
+        /* Profile Picture Styling */
+        .profile-pic-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, textarea, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <!-- Profile Picture -->
+    <div class="profile-pic-container">
+        {% if user.profile_pic %}
+            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile Picture" class="profile-pic">
+        {% else %}
+            <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-pic">
+        {% endif %}
+    </div>
+
+    <h2>{{ user.name }}'s Profile</h2>
+
+    <!-- User Info Table -->
+    <table>
+        <tr>
+            <th>Attribute</th>
+            <th>Details</th>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td>Notification Preference</td>
+            <td>{{ user.notification_preference }}</td>
+        </tr>
+        <tr>
+            <td>Payment Preference</td>
+            <td>{{ user.payment_preference }}</td>
+        </tr>
+        <tr>
+            <td>Bio</td>
+            <td>{{ user.bio }}</td>
+        </tr>
+    </table>
+
+    <!-- Single Form for All Updates -->
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="notification_preference">Notification Preferences:</label>
+            <select id="notification_preference" name="notification_preference" required>
+                <option value="email" {% if user.notification_preference == "email" %}selected{% endif %}>Email</option>
+                <option value="sms" {% if user.notification_preference == "sms" %}selected{% endif %}>SMS</option>
+                <option value="in_app" {% if user.notification_preference == "in_app" %}selected{% endif %}>In-App</option>
+            </select>
+        </div>
+
+        <!-- Payment Methods Form -->
+        <div class="form-group">
+            <label for="payment_preference">Saved Payment Method:</label>
+            <select id="payment_preference" name="payment_preference" required>
+                <option value="credit_card" {% if user.payment_preference == "credit_card" %}selected{% endif %}>Credit Card</option>
+                <option value="debit_card" {% if user.payment_preference == "debit_card" %}selected{% endif %}>Debit Card</option>
+                <option value="paypal" {% if user.payment_preference == "paypal" %}selected{% endif %}>PayPal</option>
+            </select>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+            <label for="bio">Bio:</label>
+            <textarea name="bio" id="bio" rows="4" class="form-control">{{ user.bio }}</textarea>
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="form-group">
+            <label for="profile_pic">Profile Picture:</label>
+            <input type="file" name="profile_pic" id="profile_pic" accept="image/*" class="form-control">
+        </div>
+
+        <!-- Save Changes Button -->
+        <button type="submit" class="btn btn-save">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('routes.dashboard') }}" class="back-link">Back to Dashboard</a>
+</div>
+</body>
+</html>

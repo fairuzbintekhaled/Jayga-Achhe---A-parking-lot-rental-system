@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Parking Airbnb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='about.css') }}">
+</head>
+<body>
+<header class="hero-section">
+    <div class="hero-content">
+        <h1>Log in to access your account</h1>
+        <div class="user-options">
+            <a href="{{ url_for('routes.login') }}?type=car_owner" class="user-type">Car Owner</a>
+            <a href="{{ url_for('routes.login') }}?type=renter" class="user-type">Renter</a>
+        </div>
+    </div>
+</header>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Company</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Our Offerings</a></li>
+                <li><a href="#">Newsroom</a></li>
+                <li><a href="#">Investors</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Products</h3>
+            <ul>
+                <li><a href="#">Car Sharing</a></li>
+                <li><a href="#">Parking Spaces</a></li>
+                <li><a href="#">Rentals</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Global Citizenship</h3>
+            <ul>
+                <li><a href="#">Safety</a></li>
+                <li><a href="#">Diversity & Inclusion</a></li>
+                <li><a href="#">Sustainability</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Travel</h3>
+            <ul>
+                <li><a href="#">Reserve</a></li>
+                <li><a href="#">Cities</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2025 Parking Airbnb</span>
+    </div>
+</footer>
+</body>
+</html>

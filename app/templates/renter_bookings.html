@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Bookings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='renter_dashboard.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px; /* Hidden initially */
+            width: 250px;
+            height: 100%;
+            background-color: #bcd9f6;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0; /* Slide in */
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #020202;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #020202;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #1582ef;
+            color: #fff;
+        }
+
+        .profile-pic-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        /* Content Styling */
+        .content {
+            margin-left: 100px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+
+        .content.shifted {
+            margin-left: 400px; /* Push content to the right */
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>{{ renter.name }}</h2>
+        <div class="profile-pic-container">
+            {% if renter.profile_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + renter.profile_pic) }}" alt="Profile Picture" class="profile-pic">
+            {% else %}
+                <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-pic">
+            {% endif %}
+        </div>
+        <p>{{ renter.bio or "No bio available." }}</p>
+        <a href="{{ url_for('routes.renter_profile') }}">Profile</a>
+        <a href="{{ url_for('routes.renter_bookings') }}">Your Bookings</a>
+        <a href="{{ url_for('routes.logout') }}">Logout</a>
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" id="toggle-btn">☰</button>
+
+    <!-- Main Content -->
+    <div class="content" id="content">
+        <h1>Your Bookings</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Car Owner ID</th>
+                    <th>Location</th>
+                    <th>Preferred Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.car_owner.id }}</td>
+                        <td>{{ booking.location.place_name }}</td>
+                        <td>{{ booking.preferred_date }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('routes.update_booking_status', booking_id=booking.id) }}">
+                                <select name="status" required>
+                                    <option value="Pending" {% if booking.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Approved" {% if booking.status == 'Approved' %}selected{% endif %}>Approved</option>
+                                    <option value="Rejected" {% if booking.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if bookings|length == 0 %}
+                    <tr>
+                        <td colspan="5">No bookings found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            content.classList.toggle('shifted');
+        });
+
+        
+    </script>
+</body>
+</html>

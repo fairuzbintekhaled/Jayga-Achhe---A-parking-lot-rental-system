@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation Policy</title>
+    <style>
+        .policy-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .policy-container h2 {
+            color: #007bff;
+        }
+        .policy-container ul {
+            list-style: none;
+            padding: 0;
+        }
+        .policy-container ul li {
+            margin: 10px 0;
+        }
+        .policy-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .policy-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="policy-container">
+    <h2>Cancellation Policy</h2>
+    <p>Before confirming your booking cancellation, please review the policy below:</p>
+    <ul>
+        <li>Free cancellation up to 24 hours before the booking time.</li>
+        <li>50% refund if canceled within 12-24 hours before booking.</li>
+        <li>No refund for cancellations made less than 12 hours before booking.</li>
+    </ul>
+    <form method="POST" action="{{ url_for('routes.cancellation_policy', booking_id=booking.id) }}">
+        <button type="submit">I Understand</button>
+    </form>
+</div>
+</body>
+</html>

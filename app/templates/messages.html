@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages for Booking #{{ booking.id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='renter_dashboard.css') }}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-box {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.sent {
+            background-color: #d1f7d6;
+            text-align: right;
+        }
+
+        .message.received {
+            background-color: #f0f0f0;
+            text-align: left;
+        }
+
+        .message-header {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+
+        .message-content p {
+            margin: 0;
+        }
+
+        .btn {
+            margin-top: 15px;
+        }
+
+        .message-header small {
+            font-style: italic;
+        }
+
+        .reply-form {
+            margin-top: 10px;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .reply-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reply-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Messages for Booking #{{ booking.id }}</h2>
+        <a href="{{ url_for('routes.renter_dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+
+        <!-- Display messages -->
+        <div class="message-box" id="message-box">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ 'sent' if message.sender_id == user_id else 'received' }}">
+                        <div class="message-header">
+                            <strong>
+                                {% if message.sender_id == user_id %}
+                                    You
+                                {% else %}
+                                    {% if message.sender_id == booking.car_owner_id %}
+                                        {{ car_owner.name }} (Car Owner)
+                                    {% else %}
+                                        {{ renter.name }} (Renter)
+                                    {% endif %}
+                                {% endif %}
+                            </strong>
+                            <small class="text-muted">{{ message.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                        <div class="message-content">
+                            <p>{{ message.message_content }}</p>
+                        </div>
+
+                        <!-- Reply Form -->
+                        {% if message.receiver_id == user_id %}
+                            <form class="reply-form" method="POST" action="{{ url_for('routes.reply_message', message_id=message.id) }}">
+                                <textarea name="reply_message" placeholder="Write your reply here..." rows="3" required></textarea>
+                                <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                                <button type="submit" class="btn btn-secondary">Reply</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No messages yet for this booking.</p>
+            {% endif %}
+        </div>
+
+        <!-- New message form -->
+        <form method="POST" action="{{ url_for('routes.send_message') }}" id="send-message-form">
+            <div class="form-group">
+                <label for="message_content">New Message</label>
+                <textarea class="form-control" name="message_content" id="message_content" rows="3" required></textarea>
+            </div>
+            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+            <input type="hidden" name="receiver_id" 
+                   value="{% if user_id == booking.car_owner_id %}{{ booking.renter_id }}{% else %}{{ booking.car_owner_id }}{% endif %}">
+            <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const bookingId = {{ booking.id }};  // Pass the booking ID from the backend
+        const senderId = {{ user_id }};  // Pass the current user's ID from the backend
+
+        // Join the room for this booking
+        socket.emit('join_room', { booking_id: bookingId });
+
+        // Handle sending a message
+        document.getElementById('send-message-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageContent = document.getElementById('message_content').value;
+            const receiverId = document.querySelector('input[name="receiver_id"]').value;
+
+            // Emit the message to the server
+            socket.emit('send_message', {
+                sender_id: senderId,
+                receiver_id: receiverId,
+                message_content: messageContent,
+                booking_id: bookingId
+            });
+
+            // Clear the input field
+            document.getElementById('message_content').value = '';
+        });
+
+        // Handle receiving a message
+        socket.on('receive_message', function(data) {
+            const messageBox = document.getElementById('message-box');
+            const messageItem = document.createElement('div');
+            messageItem.className = `message ${data.sender_id === senderId ? 'sent' : 'received'}`;
+            messageItem.innerHTML = `
+                <div class="message-header">
+                    <strong>${data.sender_id === senderId ? 'You' : (data.sender_id === {{ booking.car_owner_id }} ? '{{ car_owner.name }} (Car Owner)' : '{{ renter.name }} (Renter)')}</strong>
+                    <small class="text-muted">${new Date(data.timestamp).toLocaleString()}</small>
+                </div>
+                <div class="message-content">
+                    <p>${data.message_content}</p>
+                </div>
+            `;
+            messageBox.appendChild(messageItem);
+            messageBox.scrollTop = messageBox.scrollHeight; // Auto-scroll to the latest message
+        });
+    </script>
+</body>
+</html>

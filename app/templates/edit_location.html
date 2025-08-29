@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Location</title>
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='location.css') }}">
+</head>
+<body>
+  <div class="form-container">
+    <form method="POST" action="{{ url_for('routes.edit_location', location_id=location.id) }}">
+        <h1>Edit Location</h1>
+        
+            <label for="place_name">Place Name:</label>
+            <input type="text" id="place_name" name="place_name" value="{{ location.place_name }}" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="{{ location.address }}" required>
+
+            <label for="price">Price (per hour):</label>
+            <input type="number" id="price" name="price" value="{{ location.price }}" required>
+
+            <label for="amenities">Amenities:</label>
+            <input type="text" id="amenities" name="amenities" value="{{ location.amenities }}">
+
+            <label for="available">Available:</label>
+            <input type="checkbox" id="available" name="available" {% if location.available %}checked{% endif %}>
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="{{ url_for('routes.renter_dashboard') }}" class="back-link">Back to Dashboard</a>
+        <a href="{{ url_for('routes.renter_dashboard') }}">Cancel</a>
+    </div>  
+</body>
+</html>

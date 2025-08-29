@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Airbnb</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Welcome to Parking Airbnb</h1>
+</header>
+<div class="container">
+    <form method="POST">
+        <label for="user_type">I am a:</label>
+        <select name="user_type" id="user_type" required>
+            <option value="car_owner">Car Owner</option>
+            <option value="renter">Renter</option>
+        </select>
+        <button type="submit">Proceed</button>
+    </form>
+</div>
+</body>
+</html>

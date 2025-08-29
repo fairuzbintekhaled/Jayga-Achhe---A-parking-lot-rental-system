@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renter Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <style>
+        /* Profile Picture Styling */
+        .profile-pic-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, textarea, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <!-- Profile Picture -->
+    <div class="profile-pic-container">
+        {% if user.profile_pic %}
+            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile Picture" class="profile-pic">
+        {% else %}
+            <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-pic">
+        {% endif %}
+    </div>
+
+    <h2>{{ user.name }}'s Profile</h2>
+
+    <!-- Notification Preferences -->
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="notification_preference">Notification Preferences:</label>
+            <select id="notification_preference" name="notification_preference" required>
+                <option value="email" {% if user.notification_preference == "email" %}selected{% endif %}>Email</option>
+                <option value="sms" {% if user.notification_preference == "sms" %}selected{% endif %}>SMS</option>
+                <option value="in_app" {% if user.notification_preference == "in_app" %}selected{% endif %}>In-App</option>
+            </select>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="form-group">
+            <label for="payment_preference">Saved Payment Method:</label>
+            <select id="payment_preference" name="payment_preference" required>
+                <option value="credit_card" {% if user.payment_preference == "credit_card" %}selected{% endif %}>Credit Card</option>
+                <option value="debit_card" {% if user.payment_preference == "debit_card" %}selected{% endif %}>Debit Card</option>
+                <option value="paypal" {% if user.payment_preference == "paypal" %}selected{% endif %}>PayPal</option>
+            </select>
+        </div>
+
+        
+    </form>
+
+    <!-- Edit Profile Section -->
+    <form method="POST" enctype="multipart/form-data">
+        <h3>Edit Profile</h3>
+
+        <!-- Bio -->
+        <label for="bio">Bio:</label>
+        <textarea name="bio" id="bio" rows="4" class="form-control">{{ user.bio }}</textarea>
+
+        <!-- Profile Picture -->
+        <label for="profile_pic">Profile Picture:</label>
+        <input type="file" name="profile_pic" id="profile_pic" accept="image/*" class="form-control">
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('routes.renter_dashboard') }}" class="back-link">Back to Dashboard</a>
+</div>
+</body>
+</html>

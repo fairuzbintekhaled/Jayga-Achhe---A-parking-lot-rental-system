@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+<div class="login-container">
+    <form class="login-form" method="POST">
+        <h2>Login</h2>
+        
+        <!-- User Type Selection -->
+        <div class="form-group">
+            <label for="user-type">I am a:</label>
+            <select id="user-type" name="user_type" required>
+                <option value="renter">Renter (Parking Provider)</option>
+                <option value="car_owner">Rentee (Looking for Parking)</option>
+            </select>
+        </div>
+        
+        <!-- Username Input -->
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        
+        <!-- Password Input -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+        
+        <!-- Show Password -->
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="show-password" onclick="togglePassword()">
+            <label for="show-password">Show Password</label>
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit">Sign In</button>
+    
+        
+        <!-- Links -->
+        <div class="form-group">
+            <p><a href="#">Forgot Username / Password?</a></p>
+            <p>Don't have an account?</p>
+            
+            <!-- Sign Up Button -->
+            <button type="button" id="signup-button" onclick="toggleDropdown()">Sign Up</button>
+            
+            <!-- Dropdown Menu (Initially Hidden) -->
+            <div id="signup-dropdown" style="display: none; position: relative; margin-top: 10px;">
+                <select id="signup-options" onchange="navigateToSignup(this.value)">
+                    <option value="">Select an option</option>
+                    <option value="{{ url_for('routes.car_owner_register') }}">Sign up as a Rentee (Looking for Parking)</option>
+                    <option value="{{ url_for('routes.renter_register') }}">Sign up as a Renter (Parking Provider)</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+        } else {
+            passwordField.type = 'password';
+        }
+    }
+    function toggleDropdown() {
+        const dropdown = document.getElementById('signup-dropdown');
+        if (dropdown.style.display === 'none') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    }
+
+    function navigateToSignup(url) {
+        if (url) {
+            window.location.href = url;
+        }
+    }
+</script>
+</body>
+</html>
